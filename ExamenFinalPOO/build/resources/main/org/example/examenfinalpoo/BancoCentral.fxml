@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="800.0" style="-fx-background-color: #f7f79f;" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.examenfinalpoo.BancoCentralController">
+    <children>
+        <VBox layoutX="37.0" layoutY="687.0" prefHeight="103.0" prefWidth="740.0">
+            <children>
+                <TableView fx:id="tblTransaccion" prefHeight="219.0" prefWidth="740.0" translateX="-5.0">
+                    <columns>
+                        <TableColumn fx:id="idTransaccionColumn" prefWidth="75.0" text="id" />
+                        <TableColumn fx:id="fechaTransaccionColumn" prefWidth="153.0" text="fecha" />
+                        <TableColumn fx:id="montoTransaccionColumn" prefWidth="150.0" text="Monto Total" />
+                        <TableColumn fx:id="descripcionTransaccionColumn" prefWidth="270.0" text="Descripcion de compra" />
+                  <TableColumn fx:id="idTarjetaTransaccionColumn" prefWidth="90.0" text="id_tarjeta" />
+                    </columns>
+                </TableView>
+            </children>
+        </VBox>
+        <HBox layoutX="30.0" layoutY="657.0" prefHeight="25.0" prefWidth="740.0" translateY="-10.0">
+            <children>
+                <Label prefHeight="26.0" prefWidth="130.0" text="TABLA TRANSACCION">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font></Label>
+                <Button mnemonicParsing="false" onAction="#realizarCompra" prefHeight="26.0" prefWidth="110.0" text="Realizar Compra" textAlignment="RIGHT" />
+                <Button mnemonicParsing="false" onAction="#mostrarTransacciones" prefHeight="26.0" prefWidth="172.0" text="Mostrar/Actualizar Compras" translateX="5.0" />
+            <Label prefHeight="18.0" prefWidth="20.0" text="ID:" translateX="10.0" />
+            <TextField fx:id="txtIdTransaccion" prefHeight="26.0" prefWidth="71.0" translateX="10.0" />
+            <Button mnemonicParsing="false" onAction="#mostrarIDTransacciones" prefHeight="26.0" prefWidth="127.0" text="Mostrar Compra ID" translateX="15.0" />
+            <Button mnemonicParsing="false" onAction="#eliminarTransaccion" prefHeight="26.0" prefWidth="124.0" text="Eliminar Compra ID" translateX="20.0" />
+            </children>
+        </HBox>
+        <HBox layoutX="30.0" layoutY="344.0" prefHeight="25.0" prefWidth="740.0">
+            <children>
+                <Label prefHeight="26.0" prefWidth="91.0" text="TABLA CLIENTE">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font></Label>
+                <Button mnemonicParsing="false" onAction="#agregarCliente" prefHeight="26.0" prefWidth="115.0" text="Agregar Cliente" textAlignment="RIGHT" />
+                <Button mnemonicParsing="false" onAction="#mostrarClientes" prefHeight="26.0" prefWidth="161.0" text="Mostar/Actualizar Clientes" translateX="5.0" />
+            <Label text="ID:" translateX="10.0" />
+            <TextField fx:id="txtIdCliente2" prefHeight="26.0" prefWidth="81.0" translateX="10.0" />
+            <Button mnemonicParsing="false" onAction="#mostrarIDClientes" text="Mostrar Cliente ID" translateX="15.0" />
+            <Button mnemonicParsing="false" onAction="#eliminarCliente" text="Eliminar Cliente ID" translateX="20.0" />
+            </children>
+        </HBox>
+        <VBox layoutX="30.0" layoutY="533.0" prefHeight="103.0" prefWidth="740.0">
+            <children>
+                <TableView fx:id="tblTarjeta" prefHeight="219.0" prefWidth="740.0">
+                    <columns>
+                        <TableColumn fx:id="idTarjetaColumn" prefWidth="91.0" text="id" />
+                        <TableColumn fx:id="numeroTarjetaColumn" prefWidth="205.0" text="Número tarjeta" />
+                        <TableColumn fx:id="fechaExpTarjetaColumn" prefWidth="180.0" text="Fecha Expiración" />
+                        <TableColumn fx:id="tipoTarjetaColumn" text="tipo" />
+                        <TableColumn fx:id="idClienteTarjetaColumn" text="id_cliente" />
+                  <TableColumn fx:id="facilitadorTarjetaColumn" prefWidth="100.0" text="Facilitador" />
+                    </columns>
+                </TableView>
+            </children>
+        </VBox>
+        <VBox layoutX="30.0" layoutY="384.0" prefHeight="103.0" prefWidth="740.0">
+            <children>
+                <TableView fx:id="tblCliente" prefHeight="103.0" prefWidth="734.0">
+                    <columns>
+                        <TableColumn fx:id="idClienteColumn" prefWidth="75.0" text="id" />
+                        <TableColumn fx:id="nombreClienteColumn" prefWidth="199.0" text="Nombre Completo" />
+                        <TableColumn fx:id="direccionClienteColumn" prefWidth="261.0" text="Direccion" />
+                        <TableColumn fx:id="telefonoClienteColumn" minWidth="0.0" prefWidth="203.0" text="Telefono" />
+                    </columns>
+                </TableView>
+            </children>
+        </VBox>
+        <HBox layoutX="30.0" layoutY="495.0" prefHeight="25.0" prefWidth="740.0">
+            <children>
+                <Label prefHeight="26.0" prefWidth="101.0" text="TABLA TARJETA">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font></Label>
+                <Button mnemonicParsing="false" onAction="#agregarTarjetas" prefHeight="26.0" prefWidth="106.0" text="Agregar Tarjeta" textAlignment="RIGHT" />
+                <Button mnemonicParsing="false" onAction="#mostrarTarjetas" text="Mostrar/Actualizar Tarjetas" translateX="5.0" />
+            <Label text="ID:" translateX="10.0" />
+            <TextField fx:id="txtIdTarjeta2" prefHeight="26.0" prefWidth="81.0" translateX="10.0" />
+            <Button mnemonicParsing="false" onAction="#mostrarIDTarjetas" text="Mostrar Tarjeta ID" translateX="15.0" />
+            <Button mnemonicParsing="false" onAction="#eliminarTarjeta" text="Eliminar Tarjeta ID" translateX="20.0" />
+            </children>
+        </HBox>
+        <HBox layoutX="279.0" layoutY="8.0" prefHeight="65.0" prefWidth="205.0">
+            <children>
+                <ImageView fitHeight="54.0" fitWidth="294.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@Banco/Picsart_24-07-05_21-15-46-480.png" />
+                    </image>
+                </ImageView>
+            </children>
+        </HBox>
+        <HBox layoutX="14.0" layoutY="73.0" prefHeight="48.0" prefWidth="770.0">
+            <children>
+                <Label prefHeight="48.0" prefWidth="256.0" text="AGREGAR CLIENTE">
+                    <font>
+                        <Font size="17.0" />
+                    </font>
+                </Label>
+                <Label layoutX="10.0" layoutY="10.0" prefHeight="48.0" prefWidth="256.0" text="AGREGAR TARJETA">
+                    <font>
+                        <Font size="17.0" />
+                    </font>
+                </Label>
+                <Label layoutX="206.0" layoutY="10.0" prefHeight="48.0" prefWidth="256.0" text="REALIZAR COMPRA">
+                    <font>
+                        <Font size="17.0" />
+                    </font>
+                </Label>
+            </children></HBox>
+        <VBox layoutX="30.0" layoutY="121.0" prefHeight="218.0" prefWidth="226.0">
+            <children>
+                <HBox prefHeight="19.0" prefWidth="226.0">
+                    <children>
+                        <Label text="Nombre completo:" />
+                    </children>
+                </HBox>
+                <HBox layoutX="10.0" layoutY="10.0" prefHeight="21.0" prefWidth="226.0">
+                    <children>
+                        <TextArea fx:id="txtNombreCliente" prefHeight="38.0" prefWidth="229.0" />
+                    </children>
+                </HBox>
+                  <Label fx:id="lblErrorNombre" textFill="RED" />
+                <HBox layoutX="10.0" layoutY="10.0" prefHeight="19.0" prefWidth="226.0">
+                    <children>
+                        <Label text="Direccion:" />
+                    </children>
+                </HBox>
+                <TextArea fx:id="txtDireccionCliente" prefHeight="38.0" prefWidth="229.0" />
+            <Label fx:id="lblErrorDireccion" layoutX="10.0" layoutY="67.0" textFill="RED" />
+                <Label text="Telefono" />
+                <TextArea fx:id="txtTelefonoCliente" layoutX="10.0" layoutY="86.0" prefHeight="38.0" prefWidth="229.0" />
+            <Label fx:id="lblErrorTelefono" layoutX="10.0" layoutY="143.0" textFill="RED" />
+            </children>
+        </VBox>
+        <VBox layoutX="267.0" layoutY="121.0" prefHeight="218.0" prefWidth="226.0">
+            <children>
+                <HBox prefHeight="34.0" prefWidth="226.0">
+                    <children>
+                        <Label prefHeight="38.0" prefWidth="75.0" text="ID_Cliente: " />
+                  <TextField fx:id="txtIdCliente" />
+                    </children>
+                </HBox>
+                  <Label fx:id="lblErrorIdCliente" prefHeight="10.0" prefWidth="218.0" textFill="RED" translateY="-5.0" />
+                <HBox layoutX="10.0" layoutY="10.0" prefHeight="21.0" prefWidth="226.0" translateY="-5.0">
+                    <children>
+                          <Label prefHeight="38.0" prefWidth="75.0" text="Numero:" />
+                  <TextField fx:id="txtNumeroTarjeta" />
+                    </children>
+                </HBox>
+            <Label fx:id="lblErrorNumero" layoutX="10.0" layoutY="49.0" prefHeight="10.0" prefWidth="218.0" textFill="RED" translateY="-5.0" />
+                <HBox layoutX="10.0" layoutY="10.0" prefHeight="19.0" prefWidth="226.0" translateY="-5.0">
+                    <children>
+                        <Label prefHeight="18.0" prefWidth="102.0" text="Fecha Expiración:" />
+                  <DatePicker fx:id="dpFechaExp" prefHeight="26.0" prefWidth="139.0" />
+                    </children>
+                </HBox>
+            <Label fx:id="lblErrorFechaExp" prefHeight="10.0" prefWidth="218.0" textFill="RED" translateY="-10.0" />
+            <HBox prefHeight="34.0" prefWidth="226.0" translateY="-10.0">
+               <children>
+                      <Label prefHeight="18.0" prefWidth="218.0" text="Tipo Tarjeta:" />
+                      <VBox prefHeight="46.0" prefWidth="226.0">
+                     <children>
+                        <RadioButton fx:id="rbCredito" mnemonicParsing="false" text="Crédito">
+                           <toggleGroup>
+                              <ToggleGroup fx:id="tgTipoTarjeta" />
+                           </toggleGroup></RadioButton>
+                        <RadioButton fx:id="rbDebito" mnemonicParsing="false" text="Débito" toggleGroup="$tgTipoTarjeta" />
+                     </children>
+                      </VBox>
+               </children>
+            </HBox>
+            <Label fx:id="lblErrorTipoTarjeta" layoutX="10.0" layoutY="149.0" prefHeight="10.0" prefWidth="218.0" textFill="RED" translateY="-20.0" />
+            <HBox prefHeight="38.0" prefWidth="226.0" translateY="-20.0">
+               <children>
+                  <Label text="Facilitador: " />
+                  <ComboBox fx:id="facilitador" prefWidth="150.0" translateX="10.0" />
+               </children>
+            </HBox>
+            <Label fx:id="lblErrorFacilitador" layoutX="10.0" layoutY="178.0" prefHeight="10.0" prefWidth="218.0" textFill="RED" translateY="-20.0" />
+            </children>
+        </VBox>
+        <VBox layoutX="521.0" layoutY="113.0" prefHeight="218.0" prefWidth="226.0">
+            <children>
+                <HBox prefHeight="19.0" prefWidth="226.0">
+                    <children>
+                        <Label prefHeight="38.0" prefWidth="115.0" text="ID_tarjeta: " />
+                  <TextField fx:id="txtIdTarjeta" />
+                    </children>
+                </HBox>
+            <Label fx:id="lblErrorIdTarjeta" textFill="RED" />
+                <HBox layoutX="10.0" layoutY="10.0" prefHeight="38.0" prefWidth="230.0">
+                    <children>
+                          <Label prefHeight="38.0" prefWidth="75.0" text="Monto: $" />
+                  <TextField fx:id="txtMonto" translateY="5.0" />
+                    </children>
+                </HBox>
+            <Label fx:id="lblErrorMonto" textFill="RED" />
+                <HBox layoutX="10.0" layoutY="10.0" prefHeight="19.0" prefWidth="226.0">
+                    <children>
+                        <Label text="Fecha:" />
+                  <DatePicker fx:id="dpFechaCompra" translateX="20.0" />
+                    </children>
+                </HBox>
+            <Label fx:id="lblErrorFechaCompra" textFill="RED" />
+                <HBox prefHeight="17.0" prefWidth="226.0">
+                    <children>
+                        <Label text="Descripcion de la compra:" />
+                    </children>
+                </HBox>
+                <TextArea fx:id="txtDescripcionCompra" layoutX="10.0" layoutY="105.0" prefHeight="48.0" prefWidth="226.0" />
+            <Label fx:id="lblErrorDescripcionCompra" layoutX="10.0" layoutY="36.0" textFill="RED" />
+            </children>
+        </VBox>
+        <Button layoutX="572.0" layoutY="14.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="171.0" text="REPORTES" />
+        <HBox prefHeight="24.0" prefWidth="209.0" />
+    </children>
+</Pane>

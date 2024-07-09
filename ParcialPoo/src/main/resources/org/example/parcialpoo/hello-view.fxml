@@ -2,7 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.TextArea?>
@@ -83,7 +83,7 @@
                         <Insets left="25.0" right="25.0" />
                      </HBox.margin>
                   </Text>
-                  <DatePicker fx:id="dpFechaFinal" promptText="Fecha Final">
+                  <DatePicker fx:id="dpFechaFinal" nodeOrientation="RIGHT_TO_LEFT" promptText="Fecha Final">
                      <HBox.margin>
                         <Insets />
                      </HBox.margin>
@@ -95,17 +95,17 @@
             </HBox>
             <HBox alignment="CENTER" prefHeight="40.0" prefWidth="594.0">
                <children>
-                  <ChoiceBox fx:id="cbMes" prefWidth="150.0">
+                  <ComboBox fx:id="cbMes" editable="true" prefWidth="150.0" promptText="Seleccionar Mes">
                      <HBox.margin>
                         <Insets right="25.0" />
                      </HBox.margin>
-                  </ChoiceBox>
+                  </ComboBox>
                   <Text strokeType="OUTSIDE" strokeWidth="0.0" text="-" />
-                  <ChoiceBox fx:id="cbAnio" prefWidth="150.0">
+                  <ComboBox fx:id="cbAnio" editable="true" nodeOrientation="RIGHT_TO_LEFT" prefWidth="150.0" promptText="Seleccionar Año">
                      <HBox.margin>
                         <Insets left="25.0" />
                      </HBox.margin>
-                  </ChoiceBox>
+                  </ComboBox>
                </children>
                <VBox.margin>
                   <Insets top="20.0" />

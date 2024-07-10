@@ -1,8 +1,16 @@
 package org.example.parcialpoo;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.stage.Stage;
+import org.example.parcialpoo.Clases.DatabaseConnection;
+import org.example.parcialpoo.Clases.Tarjeta;
 
 import java.io.*;
 import java.net.URL;
@@ -11,7 +19,7 @@ import java.util.*;
 import java.sql.*;
 import java.util.Date;
 
-public class HelloController implements Initializable
+public class ReportesController implements Initializable
 {
     @FXML
     private RadioButton rbReporteA; //00377723 RadioButton para elegir el reporte A
@@ -46,13 +54,36 @@ public class HelloController implements Initializable
     private final String ruta = "src/main/java/org/example/parcialpoo/Reportes/"; //00377723 Ruta donde se guardaran los archivos de reporte
     String reporte = null; //00377723 Se usa para juntar la ruta y el nombre del archivo para mayor simplicidad a la hora de crear y leer el archivo
     //Bases de datos
-    String url = "jdbc:mysql://localhost:3306/dbBancoCentral"; //00377723 url del driver para conectar a la base de datos
-    String user = "root"; //00377723 usuario que se utiliza para conectarse a la base de datos
-    String password = "josearbizu"; //00377723 contraseña del usuario
+    Connection conn;
     String query = null; //00377723 Se usa para guardar la consulta que se desea realizar a la base de datos
+
+    private Stage stage; //00377723 Stage para generar la ventana
+    private Scene scene; //00377723 Escena que carga dentro de la ventana de Stage
+    private Parent root; //00377723 Almacena todos los Children de la escena
+
+    @FXML
+    public void cambiarEscenaBanco(ActionEvent event) throws IOException //00377723 Cambia a la escena principal del programa
+    {
+        root = FXMLLoader.load(getClass().getResource("BancoCentral.fxml")); //00377723 Carga el archivo fxml de la escena principal
+        stage = (Stage)((Node)event.getSource()).getScene().getWindow(); //00377723 prepara la ventana
+        scene = new Scene(root); //00377723 guarda la escena con el fxml de BancoCentral
+        stage.setScene(scene); //00377723  agrega la escena a la ventana antes creada
+        stage.show(); //00377723 Muestra la escena principal
+    }
+
+    private void connectDatabase() { // 00379223 Método para conectar a la base de datos
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver"); // 00379223 Carga el controlador JDBC para MySQL
+            conn = DatabaseConnection.getConnection(); // 00379223 Obtiene la conexión a la base de datos utilizando la clase DatabaseConnection
+        } catch (ClassNotFoundException |
+                 SQLException e) { // 00379223 Captura excepciones ClassNotFoundException y SQLException
+            e.printStackTrace(); // 00379223 Imprime la traza de la excepción
+        }
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) { //00377723 Corre al inicio del programa
+        connectDatabase(); // 00379223 Establece la conexión a la base de datos
         deshabilitar(); //00377723 Se llama al método "deshabilitar" para que no se pueda modificar ningún campo si aún no se ha elegido un tipo de reporte
         ToggleGroup ReporteGroup = new ToggleGroup(); //00377723 Crea el ToggleGroup para no seleccionar más de un RadioButton a la vez
         rbReporteA.setToggleGroup(ReporteGroup); //00377723 Se mete al RadioButton del reporte A en el ToggleGroup
@@ -125,11 +156,10 @@ public class HelloController implements Initializable
         }
     }
 
-    public void generarReporteA() //00377723 Método que genera el reporte A mediante una consulta sql
-    {
+    public void generarReporteA() { //00377723 Metodo que genera el reporte A mediante una consulta sql
         try { //00377723 Try para evaluar que no haya un error
-            Connection conn = DriverManager.getConnection(url, user, password);
-            Statement st = conn.createStatement();
+            //Connection conn = DriverManager.getConnection(url, user, password); //00377723 Conecta a la base de datos
+            Statement st = conn.createStatement(); //00377723 Crea un Statement para ejecutar la consulta
 
             reporte = ruta + "ReporteA-" + fechaActual + ".txt"; //00377723 Guarda la ruta y el nombre del archivo para el reporte A
 
@@ -137,120 +167,150 @@ public class HelloController implements Initializable
                     "FROM tbTransaccion t " +
                     "INNER JOIN tbTarjeta b ON t.id_tarjeta = b.id_tarjeta " +
                     "INNER JOIN tbCliente c ON b.id_cliente = c.id " +
-                    "WHERE c.id = " + txtIDCliente.getText() + " AND t.fecha BETWEEN '" + dpFechaInicial.getValue().toString() + "' AND '" + dpFechaFinal.getValue().toString() + "'";
-            ResultSet rs = st.executeQuery(query);
-            while (rs.next()) {
-                txtReporte.appendText("ID: " + rs.getInt("t.id") + " Fecha: " + rs.getDate("t.fecha") + " Monto: " + rs.getFloat("t.monto") + " Descripcion: " + rs.getString("t.descripcion") + " Nombre: " + rs.getString("c.nombre") + "\n");
-            }
-            escribirArchivo(txtReporte); //00377723 Llama al Método escribirArchivo para generar el reporte
-            conn.close(); //00377723 Cierra la conexión a la base de datos
-        }catch (Exception e){
-            System.out.println("Fallo al generar reporteA");        }
-    }
+                    "WHERE c.id = " + txtIDCliente.getText() + " AND t.fecha BETWEEN '" + dpFechaInicial.getValue().toString() + "' AND '" + dpFechaFinal.getValue().toString() + "'"; //00377723 guarda la consulta en un string
+            ResultSet rs = st.executeQuery(query); //00377723 Ejecuta la consulta
 
-    public void generarReporteB()
-    {
-        try{
-            Connection conn = DriverManager.getConnection(url, user, password);
-            Statement st = conn.createStatement();
-            reporte = ruta+"ReporteB-" + fechaActual+".txt"; //00377723 Guarda la ruta y el nombre del archivo para el reporte B
+            // Formato para Reporte A 00064122
+            txtReporte.appendText("-------Reporte A-------------\n"); //00064122 Agrega encabezado del reporte
+            txtReporte.appendText("Cliente: " + txtIDCliente.getText() + "\n\n"); //00064122 Agrega el ID del cliente
+            txtReporte.appendText("Compras realizadas:\n"); //00064122 Agrega el encabezado de compras realizadas
 
-             query = "";
+            while (rs.next()) { //00064122 Itera sobre los resultados de la consulta
+                txtReporte.appendText("Descripcion: " + rs.getString("t.descripcion") + "\t Monto: " + rs.getFloat("t.monto") + "\t Fecha: " + rs.getDate("t.fecha") + "\n"); //00064122 Formatea y agrega cada transaccion
+            } //00064122 Fin de la iteracion
+            escribirArchivo(txtReporte); // Fin de formato para Reporte A 00064122 Llama al metodo escribirArchivo para guardar el reporte
 
-
-
-
-            escribirArchivo(txtReporte); // 00064122 Guarda el reporte en un archivo
-            conn.close(); //00377723 Cierra la conexión a la base de datos
-
-        }catch (Exception e) {
-            System.out.println("Fallo al generar reporte B");
+        } catch (Exception e) { //00377723 En caso de error
+            System.out.println("Fallo al generar reporteA"); //00377723 Imprime mensaje de error
         }
     }
 
-    public void generarReporteC()
-    {
+    public void generarReporteB() { //00377723 Metodo que genera el reporte B mediante una consulta sql
         try {
-            Connection conn = DriverManager.getConnection(url, user, password);
-            Statement st = conn.createStatement();
+            //Connection conn = DriverManager.getConnection(url, user, password); //00377723 Conecta a la base de datos
+            Statement st = conn.createStatement(); //00377723 Crea un Statement para ejecutar la consulta
+            reporte = ruta + "ReporteB-" + fechaActual + ".txt"; //00377723 Guarda la ruta y el nombre del archivo para el reporte B
+
+            query = "SELECT SUM(t.monto) AS totalGastado, c.nombre " +
+                    "FROM tbTransaccion t " +
+                    "INNER JOIN tbTarjeta b ON t.id_tarjeta = b.id_tarjeta " +
+                    "INNER JOIN tbCliente c ON b.id_cliente = c.id " +
+                    "WHERE c.id = " + txtIDCliente.getText() + " AND MONTH(t.fecha) = " + (cbMes.getSelectionModel().getSelectedIndex() + 1) + " AND YEAR(t.fecha) = " + cbAnio.getValue() + " GROUP BY c.nombre"; //00377723 guarda la consulta en un string
+            ResultSet rs = st.executeQuery(query); //00377723 Ejecuta la consulta
+
+            // Formato para Reporte B 00064122
+            if (rs.next()) { //00064122 Verifica si hay resultados
+                txtReporte.appendText("----------Reporte B-------------\n"); //00064122 Agrega encabezado del reporte
+                txtReporte.appendText("Cliente: " + rs.getString("c.nombre") + "\n"); //00064122 Agrega el nombre del cliente
+                txtReporte.appendText("Fecha: " + cbMes.getValue() + " " + cbAnio.getValue() + "\n"); //00064122 Agrega la fecha del reporte
+                txtReporte.appendText("Total gastado: " + rs.getFloat("totalGastado") + "\n"); //00064122 Agrega el total gastado
+            } //00064122 Fin de la condicion
+
+            escribirArchivo(txtReporte); // Fin de formato para Reporte B 00064122 Llama al metodo escribirArchivo para guardar el reporte
+
+        } catch (Exception e) { //00377723 En caso de error
+            System.out.println("Fallo al generar reporte B"); //00377723 Imprime mensaje de error
+        }
+    }
+
+    public void generarReporteC() { //00377723 Metodo que genera el reporte C mediante una consulta sql
+        try {
+            //Connection conn = DriverManager.getConnection(url, user, password); //00377723 Conecta a la base de datos
+            Statement st = conn.createStatement(); //00377723 Crea un Statement para ejecutar la consulta
 
             reporte = ruta + "ReporteC-" + fechaActual + ".txt"; //00377723 Guarda la ruta y el nombre del archivo para el reporte C
 
-            query = "SELECT numero_tarjeta, tipo FROM tbTarjeta WHERE id_cliente = " + txtIDCliente.getText(); // Consulta para obtener las tarjetas de un cliente específico
-            ResultSet rs = st.executeQuery(query);
-            List<Card> cards = new ArrayList<>(); // 00064122 Lista que almacena las tarjetas
+            // Obtener el nombre del cliente 00064122
+            String clienteNombreQuery = "SELECT nombre FROM tbCliente WHERE id = " + txtIDCliente.getText(); //00064122 Consulta para obtener el nombre del cliente
+            ResultSet clienteRs = st.executeQuery(clienteNombreQuery); //00064122 Ejecuta la consulta
+            clienteRs.next(); //00064122 Pasa al siguiente resultado
+            String clienteNombre = clienteRs.getString("nombre"); //00064122 Obtiene el nombre del cliente
+
+            query = "SELECT numero_tarjeta, tipo FROM tbTarjeta WHERE id_cliente = " + txtIDCliente.getText(); //00064122 Consulta para obtener las tarjetas de un cliente especifico
+            ResultSet rs = st.executeQuery(query); //00064122 Ejecuta la consulta
+            List<Tarjeta> cards = new ArrayList<>(); // 00064122 Crea una lista para almacenar las tarjetas
             while (rs.next()) { // 00064122 Itera sobre los resultados de la consulta
-                Card card = new Card(); // 00064122 Crea una nueva instancia de Card
-                card.setNumero_tarjeta(rs.getString("numero_tarjeta")); // 00064122 Establece el número de la tarjeta
+                Tarjeta card = new Tarjeta(); // 00064122 Crea una nueva instancia de Card
+                card.setNumero_tarjeta(rs.getString("numero_tarjeta")); // 00064122 Establece el numero de la tarjeta
                 card.setTipo(rs.getString("tipo")); // 00064122 Establece el tipo de tarjeta
-                cards.add(card); // 00064122 Añade la tarjeta a la lista
-            }
+                cards.add(card); // 00064122 Anade la tarjeta a la lista
+            } //00064122 Fin de la iteracion
 
-            txtReporte.setText(formatCards(cards)); // 00064122 Formatea las tarjetas utilizando el método formatCards y establecemos el contenido formateado en el TextArea
-            escribirArchivo(txtReporte); // 00064122 Guarda el reporte en un archivo
-            conn.close(); //00377723 Cierra la conexión a la base de datos
+            // Formato para Reporte C 00064122
+            txtReporte.appendText("-------Reporte C-------------\n"); //00064122 Agrega encabezado del reporte
+            txtReporte.appendText("Cliente: " + clienteNombre + "\n\n"); //00064122 Agrega el nombre del cliente
+            txtReporte.appendText(formatCards(cards)); //00064122 Formatea y agrega las tarjetas al reporte
 
-        }catch (Exception e){
-            System.out.println("Fallo al generar reporteC");
+            escribirArchivo(txtReporte); // 00064122 Llama al metodo escribirArchivo para guardar el reporte
+
+        } catch (Exception e) { //00377723 En caso de error
+            System.out.println("Fallo al generar reporte C"); //00377723 Imprime mensaje de error
         }
-
     }
 
-    // Método para formatear las tarjetas
-    public String formatCards(List<Card> cards) {
-        StringBuilder report = new StringBuilder(); // 00064122 StringBuilder para crear el contenido del reporte
-        report.append("Tarjetas de crédito:\n"); // 00064122 Añade un encabezado para las tarjetas de crédito
+    // Metodo para formatear las tarjetas
+    public String formatCards(List<Tarjeta> cards) {
+        StringBuilder report = new StringBuilder(); // 00064122 Crea un StringBuilder para crear el contenido del reporte
+        report.append("Tarjetas de credito:\n"); // 00064122 Anade un encabezado para las tarjetas de crédito
         boolean hasCreditCards = false; // 00064122 Verifica si hay tarjetas de crédito
         boolean hasDebitCards = false; // 00064122 Verifica si hay tarjetas de débito
 
-        for (Card card : cards) { //00064122 Itera sobre la lista de tarjetas
-            // 00064122 censura el número de la tarjeta: agarra los últimos 4 dígitos y los cabía por "XXXX XXXX XXXX "
+        for (Tarjeta card : cards) { //00064122 Itera sobre la lista de tarjetas
+            // 00064122 Censura el número de la tarjeta: toma los ultimos 4 digitos y los precede con "XXXX XXXX XXXX "
             String maskedNumber = "XXXX XXXX XXXX " + card.getNumero_tarjeta().substring(card.getNumero_tarjeta().length() - 4);
-
-            if (card.getTipo().equalsIgnoreCase("Credito")) { //00064122 Si la tarjeta es de crédito
-                report.append(maskedNumber).append("\n");  // 00064122 añadimos el número de tarjeta censurando al reporte
-                hasCreditCards = true;// 00064122 indica que hay tarjetas de crédito
+            if (card.getTipo().equalsIgnoreCase("Credito")) { //00064122 Si la tarjeta es de credito
+                report.append(maskedNumber).append("\n");  // 00064122 Anade el numero de tarjeta censurado al reporte
+                hasCreditCards = true; // 00064122 Indica que hay tarjetas de credito
             }
         }
 
-        if (!hasCreditCards) { // 00064122 Si no hay tarjetas de crédito
-            report.append("N/A\n"); // 00064122 Añadimos "N/A" al reporte indicando que no hay tarjetas de crédito
+        if (!hasCreditCards) { // 00064122 Si no hay tarjetas de credito
+            report.append("N/A\n"); // 00064122 Anade "N/A" al reporte indicando que no hay tarjetas de credito
         }
 
-        report.append("Tarjetas de Débito:\n"); // 00064122 encábezado para las tarjetas de débito
-        for (Card card : cards) {// 00064122 itera sobre la lista de tarjetas
-            // 00064122 censura  el número de la tarjeta: agarra los últimos 4 dígitos y los ca,bia por "XXXX XXXX XXXX "
+        report.append("Tarjetas de Debito:\n"); // 00064122 Anade un encabezado para las tarjetas de debito
+        for (Tarjeta card : cards) { //00064122 Itera sobre la lista de tarjetas
+            // 00064122 Censura el número de la tarjeta: toma los ultimos 4 digitos y los precede con "XXXX XXXX XXXX "
             String maskedNumber = "XXXX XXXX XXXX " + card.getNumero_tarjeta().substring(card.getNumero_tarjeta().length() - 4);
-            if (card.getTipo().equalsIgnoreCase("Debito")) { // 00064122 si la tarjeta es de debito
-                report.append(maskedNumber).append("\n"); // 00064122 añadimos el número de tarjeta censurando al reporte
-                hasDebitCards = true; // 00064122 indica que hay tarjetas de débito
+            if (card.getTipo().equalsIgnoreCase("Debito")) { //00064122 Si la tarjeta es de debito
+                report.append(maskedNumber).append("\n"); // 00064122 Anade el numero de tarjeta censurado al reporte
+                hasDebitCards = true; //00064122 Indica que hay tarjetas de débito
             }
         }
 
         if (!hasDebitCards) { // 00064122 Si no hay tarjetas de debito
-            report.append("N/A\n"); // 00064122 Añadimos "N/A" al reporte indicando que no hay tarjetas de debito
+            report.append("N/A\n"); // 00064122 Añade "N/A" al reporte indicando que no hay tarjetas de debito
         }
 
-        return report.toString(); //00064122 Devuelve la info del reporte como String
+        return report.toString(); //00064122 Devuelve la información del reporte como String
     }
 
-    public void generarReporteD()
-    {
-        try{
-            Connection conn = DriverManager.getConnection(url, user, password);
-            Statement st = conn.createStatement();
-            reporte = ruta+"ReporteD-" + fechaActual+".txt"; //00377723 Guarda la ruta y el nombre del archivo para el reporte B
+    public void generarReporteD() { //00377723 Método que genera el reporte D mediante una consulta sql
+        try {
+            //Connection conn = DriverManager.getConnection(url, user, password); //00377723 Conecta a la base de datos
+            Statement st = conn.createStatement(); //00377723 Crea un Statement para ejecutar la consulta
+            reporte = ruta + "ReporteD-" + fechaActual + ".txt"; //00377723 Guarda la ruta y el nombre del archivo para el reporte D
 
-            query = "";
+            query = "SELECT c.nombre, COUNT(t.id) AS cantidadCompras, SUM(t.monto) AS totalGastado " +
+                    "FROM tbTransaccion t " +
+                    "INNER JOIN tbTarjeta b ON t.id_tarjeta = b.id_tarjeta " +
+                    "INNER JOIN tbCliente c ON b.id_cliente = c.id " +
+                    "WHERE b.facilitador = '" + txtFacilitador.getText() + "' " +
+                    "GROUP BY c.nombre"; //00377723 guarda la consulta en un string
+            ResultSet rs = st.executeQuery(query); //00377723 Ejecuta la consulta
 
+            // Formato para Reporte D 00064122
+            txtReporte.appendText("----------Reporte D-----------------\n"); //00064122 Agrega encabezado del reporte
+            txtReporte.appendText("Facilitador: " + txtFacilitador.getText() + "\n\n"); //00064122 Agrega el facilitador de la tarjeta
 
+            while (rs.next()) { //00064122 Itera sobre los resultados de la consulta
+                txtReporte.appendText("Cliente: " + rs.getString("c.nombre") + "\tCantidad de compras: " + rs.getInt("cantidadCompras") + "\tTotal gastado: " + rs.getFloat("totalGastado") + "\n"); //00064122 Formatea y agrega cada transaccion
+            } //00064122 Fin de la iteracion
 
+            escribirArchivo(txtReporte); // Fin de formato para Reporte D 00064122 Llama al metodo escribirArchivo para guardar el reporte
 
-            escribirArchivo(txtReporte); // 00064122 Guarda el reporte en un archivo
-            conn.close(); //00377723 Cierra la conexión a la base de datos
-
-        }catch (Exception e) {
-            System.out.println("Fallo al generar reporte B");
+        } catch (Exception e) { //00377723 En caso de error
+            System.out.println("Fallo al generar reporte D"); //00377723 Imprime mensaje de error
         }
     }
 
@@ -315,7 +375,7 @@ public class HelloController implements Initializable
                     alertVacio.showAndWait(); //00377723 Muestra la pantalla de Advertencia en caso de que falte algo
                 }
                 else { //00377723 En caso de no encontrar errores
-                    generarReporteD(); //00377723 Llama al método generarReporteC para realizar la consulta y escribir el reporte
+                    generarReporteD(); //00377723 Llama al método generarReporteD para realizar la consulta y escribir el reporte
                 }
             }
 

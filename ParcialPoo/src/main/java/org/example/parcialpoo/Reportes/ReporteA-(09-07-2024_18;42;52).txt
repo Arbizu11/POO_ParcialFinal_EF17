@@ -1,0 +1,4 @@
+-------Reporte A-------------
+Cliente: 2
+
+Compras realizadas:

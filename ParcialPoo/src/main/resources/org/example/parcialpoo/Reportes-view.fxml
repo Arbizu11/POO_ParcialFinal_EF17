@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1080.0" style="-fx-background-color: #f7f79f;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.parcialpoo.ReportesController">
+   <children>
+      <TextArea fx:id="txtReporte" editable="false" maxWidth="550.0" HBox.hgrow="ALWAYS">
+         <HBox.margin>
+            <Insets bottom="10.0" left="10.0" top="10.0" />
+         </HBox.margin>
+      </TextArea>
+      <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+         <children>
+            <Button fx:id="btnRegresar" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#cambiarEscenaBanco" prefHeight="54.0" prefWidth="162.0" text="REGRESAR" VBox.vgrow="ALWAYS">
+               <VBox.margin>
+                  <Insets right="10.0" top="10.0" />
+               </VBox.margin>
+            </Button>
+            <HBox alignment="CENTER" prefHeight="18.0" prefWidth="891.0">
+               <VBox.margin>
+                  <Insets top="40.0" />
+               </VBox.margin>
+               <children>
+                  <RadioButton fx:id="rbReporteA" mnemonicParsing="false" onAction="#prepararReporteA" text="Reporte A">
+                     <HBox.margin>
+                        <Insets left="10.0" />
+                     </HBox.margin>
+                  </RadioButton>
+                  <RadioButton fx:id="rbReporteB" mnemonicParsing="false" onAction="#prepararReporteB" text="Reporte B">
+                     <HBox.margin>
+                        <Insets left="60.0" />
+                     </HBox.margin>
+                  </RadioButton>
+                  <RadioButton fx:id="rbReporteC" mnemonicParsing="false" onAction="#prepararReporteC" text="Reporte C">
+                     <HBox.margin>
+                        <Insets left="60.0" />
+                     </HBox.margin>
+                  </RadioButton>
+                  <RadioButton fx:id="rbReporteD" mnemonicParsing="false" onAction="#prepararReporteD" text="Reporte D">
+                     <HBox.margin>
+                        <Insets left="60.0" right="10.0" />
+                     </HBox.margin>
+                  </RadioButton>
+               </children>
+            </HBox>
+            <TextField fx:id="txtDescripcion" alignment="CENTER" editable="false" promptText="Descripción reporte" VBox.vgrow="ALWAYS">
+               <VBox.margin>
+                  <Insets left="10.0" right="10.0" top="10.0" />
+               </VBox.margin>
+            </TextField>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="FILTROS">
+               <font>
+                  <Font size="24.0" />
+               </font>
+               <VBox.margin>
+                  <Insets top="60.0" />
+               </VBox.margin>
+            </Text>
+            <TextField fx:id="txtIDCliente" alignment="CENTER" maxHeight="25.0" maxWidth="150.0" promptText="ID Cliente" VBox.vgrow="ALWAYS">
+               <VBox.margin>
+                  <Insets top="30.0" />
+               </VBox.margin>
+            </TextField>
+            <HBox alignment="CENTER" maxWidth="500.0" prefHeight="30.0" prefWidth="306.0">
+               <children>
+                  <DatePicker fx:id="dpFechaInicial" promptText="Fecha Inicial">
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </DatePicker>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="-">
+                     <HBox.margin>
+                        <Insets left="25.0" right="25.0" />
+                     </HBox.margin>
+                  </Text>
+                  <DatePicker fx:id="dpFechaFinal" nodeOrientation="RIGHT_TO_LEFT" promptText="Fecha Final">
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </DatePicker>
+               </children>
+               <VBox.margin>
+                  <Insets top="20.0" />
+               </VBox.margin>
+            </HBox>
+            <HBox alignment="CENTER" prefHeight="40.0" prefWidth="594.0">
+               <children>
+                  <ComboBox fx:id="cbMes" editable="true" prefWidth="150.0" promptText="Seleccionar Mes">
+                     <HBox.margin>
+                        <Insets right="25.0" />
+                     </HBox.margin>
+                  </ComboBox>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="-" />
+                  <ComboBox fx:id="cbAnio" editable="true" nodeOrientation="RIGHT_TO_LEFT" prefWidth="150.0" promptText="Seleccionar Año">
+                     <HBox.margin>
+                        <Insets left="25.0" />
+                     </HBox.margin>
+                  </ComboBox>
+               </children>
+               <VBox.margin>
+                  <Insets top="20.0" />
+               </VBox.margin>
+            </HBox>
+            <ComboBox fx:id="cbFacilitadores" editable="true" prefWidth="150.0" promptText="Facilitadores">
+               <VBox.margin>
+                  <Insets top="20.0" />
+               </VBox.margin>
+            </ComboBox>
+            <Button fx:id="btnGenerar" mnemonicParsing="false" onAction="#generarReporte" prefHeight="74.0" prefWidth="205.0" text="GENERAR REPORTE" VBox.vgrow="ALWAYS">
+               <font>
+                  <Font size="17.0" />
+               </font>
+               <VBox.margin>
+                  <Insets top="70.0" />
+               </VBox.margin>
+            </Button>
+         </children>
+      </VBox>
+   </children>
+</HBox>

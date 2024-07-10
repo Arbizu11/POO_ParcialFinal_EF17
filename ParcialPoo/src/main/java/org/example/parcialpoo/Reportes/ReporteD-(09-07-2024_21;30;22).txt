@@ -1,0 +1,4 @@
+----------Reporte D-----------------
+Facilitador: MasterCard
+
+Cliente: Anderson	Cantidad de compras: 1	Total gastado: 105.7

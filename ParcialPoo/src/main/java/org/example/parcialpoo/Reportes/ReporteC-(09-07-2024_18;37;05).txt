@@ -1,0 +1,7 @@
+-------Reporte C-------------
+Cliente: Fernando
+
+Tarjetas de credito:
+XXXX XXXX XXXX 4085
+Tarjetas de Debito:
+N/A

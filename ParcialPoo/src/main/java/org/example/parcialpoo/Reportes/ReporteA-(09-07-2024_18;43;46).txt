@@ -1,0 +1,5 @@
+-------Reporte A-------------
+Cliente: 2
+
+Compras realizadas:
+Descripcion: Cartera Chanel	 Monto: 250.5	 Fecha: 2024-04-03

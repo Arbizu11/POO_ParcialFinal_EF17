@@ -1,0 +1,5 @@
+-------Reporte A-------------
+Cliente: 3
+
+Compras realizadas:
+Descripcion: Airpods pro	 Monto: 105.7	 Fecha: 2024-04-23

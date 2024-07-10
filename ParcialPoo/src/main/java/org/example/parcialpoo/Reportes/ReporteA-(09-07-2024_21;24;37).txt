@@ -1,0 +1,6 @@
+-------Reporte A-------------
+Cliente: 1
+
+Compras realizadas:
+Descripcion: Compra en ofertas de Steam	 Monto: 35.6	 Fecha: 2024-06-07
+Descripcion: Compra pasaje de vuelo	 Monto: 40.0	 Fecha: 2024-05-20

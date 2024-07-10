@@ -10,6 +10,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import org.example.parcialpoo.Clases.DatabaseConnection;
+import org.example.parcialpoo.Clases.Facilitador;
 import org.example.parcialpoo.Clases.Tarjeta;
 
 import java.io.*;
@@ -44,7 +45,7 @@ public class ReportesController implements Initializable
     @FXML
     private ComboBox<Integer> cbAnio; //00377723 ComboBox para elegir el año que se quiere
     @FXML
-    private TextField txtFacilitador; //00377723 Espacio donde se escribe el facilitador de tarjetas para generar el reporte D
+    private ComboBox<Facilitador> cbFacilitadores; //00377723 Espacio donde se escribe el facilitador de tarjetas para generar el reporte D
     @FXML
     private TextArea txtReporte; //00377723 Cuadro de texto donde es escriben los reportes después de generarlos
 
@@ -94,6 +95,24 @@ public class ReportesController implements Initializable
         for(int actualyear = Calendar.getInstance().get(Calendar.YEAR); actualyear>= 1970; actualyear--){ //00377723 Itera desde el año actual hasta 1970
             cbAnio.getItems().addAll(actualyear); //00377723 Añade los años al ComboBox
         }
+        setUpFacilitadores(); //00377723 Añade al comboBox de facilitadores los datos
+    }
+
+    private void setUpFacilitadores() { // 00379223 Método para configurar el ComboBox de facilitadores
+        cbFacilitadores.getItems().clear(); // 00379223 Limpia los elementos existentes en el ComboBox
+
+        try {
+            Statement st = conn.createStatement(); // 00379223 Crea una declaración para ejecutar consultas SQL
+            ResultSet rs = st.executeQuery("SELECT * FROM tbFacilitador"); // 00379223 Ejecuta una consulta para obtener los facilitadores desde la base de datos
+
+            while (rs.next()) { // 00379223 Itera sobre los resultados de la consulta
+                Facilitador facilitador1 = new Facilitador(rs.getInt("id"), rs.getString("nombre")); // 00379223 Crea un objeto Facilitador con los datos obtenidos de la consulta
+                cbFacilitadores.getItems().add(facilitador1); // 00379223 Agrega el facilitador al ComboBox
+            }
+
+        } catch (Exception e) { // 00379223 Captura cualquier excepción y muestra un mensaje de error
+            showAlertError("Error", "No se pudo obtener los facilitadores");//00379223 Muestra una alerta de error al no guardar los facilitadores
+        }
     }
 
     public void deshabilitar() //00377723 Método para deshabilitar todos los filtros para crear los reportes
@@ -103,7 +122,7 @@ public class ReportesController implements Initializable
         dpFechaFinal.setDisable(true); //00377723 Deshabilita el DatePicker donde se selecciona la fecha de final del rango
         cbMes.setDisable(true); //00377723 Deshabilita el ComboBox donde se selecciona el mes
         cbAnio.setDisable(true); //00377723 Deshabilita el ComboBox donde se selecciona el año
-        txtFacilitador.setDisable(true); //00377723 Deshabilita el TextField donde se escribe el Facilitador de tarjetas
+        cbFacilitadores.setDisable(true); //00377723 Deshabilita el TextField donde se escribe el Facilitador de tarjetas
     }
 
     @FXML
@@ -139,7 +158,7 @@ public class ReportesController implements Initializable
     {
         deshabilitar(); //00377723 Se llama al método primero para asegurarse que todas estén deshabilitadas y así solo queden las que se usarán para este reporte
         txtDescripcion.setText("Listar clientes que han realizado compras con un facilitador de tarjeta específico"); //00377723 Escribe la descripción del reporte para entender que es lo que hace
-        txtFacilitador.setDisable(false); //00377723 Habilita para poder escribir el Facilitador de tarjeta
+        cbFacilitadores.setDisable(false); //00377723 Habilita para poder escribir el Facilitador de tarjeta
 
     }
 
@@ -204,6 +223,8 @@ public class ReportesController implements Initializable
                 txtReporte.appendText("Cliente: " + rs.getString("c.nombre") + "\n"); //00064122 Agrega el nombre del cliente
                 txtReporte.appendText("Fecha: " + cbMes.getValue() + " " + cbAnio.getValue() + "\n"); //00064122 Agrega la fecha del reporte
                 txtReporte.appendText("Total gastado: " + rs.getFloat("totalGastado") + "\n"); //00064122 Agrega el total gastado
+            } else { //00064122 Si no se encuentra ningun resultado
+                txtReporte.appendText("No se encontraron transacciones para el cliente en el periodo especificado.\n"); //00064122 Agrega un mensaje indicando que no se encontraron resultados
             } //00064122 Fin de la condicion
 
             escribirArchivo(txtReporte); // Fin de formato para Reporte B 00064122 Llama al metodo escribirArchivo para guardar el reporte
@@ -251,29 +272,29 @@ public class ReportesController implements Initializable
     // Metodo para formatear las tarjetas
     public String formatCards(List<Tarjeta> cards) {
         StringBuilder report = new StringBuilder(); // 00064122 Crea un StringBuilder para crear el contenido del reporte
-        report.append("Tarjetas de credito:\n"); // 00064122 Anade un encabezado para las tarjetas de crédito
+        report.append("Tarjetas de credito:\n"); // 00064122 Añade un encabezado para las tarjetas de crédito
         boolean hasCreditCards = false; // 00064122 Verifica si hay tarjetas de crédito
         boolean hasDebitCards = false; // 00064122 Verifica si hay tarjetas de débito
 
         for (Tarjeta card : cards) { //00064122 Itera sobre la lista de tarjetas
-            // 00064122 Censura el número de la tarjeta: toma los ultimos 4 digitos y los precede con "XXXX XXXX XXXX "
+            // 00064122 Censura el número de la tarjeta: toma los últimos 4 dígitos y los precede con "XXXX XXXX XXXX "
             String maskedNumber = "XXXX XXXX XXXX " + card.getNumero_tarjeta().substring(card.getNumero_tarjeta().length() - 4);
-            if (card.getTipo().equalsIgnoreCase("Credito")) { //00064122 Si la tarjeta es de credito
-                report.append(maskedNumber).append("\n");  // 00064122 Anade el numero de tarjeta censurado al reporte
-                hasCreditCards = true; // 00064122 Indica que hay tarjetas de credito
+            if (card.getTipo().equalsIgnoreCase("Credito")) { //00064122 Si la tarjeta es de crédito
+                report.append(maskedNumber).append("\n");  // 00064122 Añade el número de tarjeta censurado al reporte
+                hasCreditCards = true; // 00064122 Indica que hay tarjetas de crédito
             }
         }
 
-        if (!hasCreditCards) { // 00064122 Si no hay tarjetas de credito
-            report.append("N/A\n"); // 00064122 Anade "N/A" al reporte indicando que no hay tarjetas de credito
+        if (!hasCreditCards) { // 00064122 Si no hay tarjetas de crédito
+            report.append("N/A\n"); // 00064122 Añade "N/A" al reporte indicando que no hay tarjetas de crédito
         }
 
-        report.append("Tarjetas de Debito:\n"); // 00064122 Anade un encabezado para las tarjetas de debito
+        report.append("Tarjetas de Debito:\n"); // 00064122 Añade un encabezado para las tarjetas de débito
         for (Tarjeta card : cards) { //00064122 Itera sobre la lista de tarjetas
-            // 00064122 Censura el número de la tarjeta: toma los ultimos 4 digitos y los precede con "XXXX XXXX XXXX "
+            // 00064122 Censura el número de la tarjeta: toma los últimos 4 dígitos y los precede con "XXXX XXXX XXXX "
             String maskedNumber = "XXXX XXXX XXXX " + card.getNumero_tarjeta().substring(card.getNumero_tarjeta().length() - 4);
             if (card.getTipo().equalsIgnoreCase("Debito")) { //00064122 Si la tarjeta es de debito
-                report.append(maskedNumber).append("\n"); // 00064122 Anade el numero de tarjeta censurado al reporte
+                report.append(maskedNumber).append("\n"); // 00064122 Añade el número de tarjeta censurado al reporte
                 hasDebitCards = true; //00064122 Indica que hay tarjetas de débito
             }
         }
@@ -285,9 +306,8 @@ public class ReportesController implements Initializable
         return report.toString(); //00064122 Devuelve la información del reporte como String
     }
 
-    public void generarReporteD() { //00377723 Método que genera el reporte D mediante una consulta sql
+    public void generarReporteD() { //00377723 Metodo que genera el reporte D mediante una consulta sql
         try {
-            //Connection conn = DriverManager.getConnection(url, user, password); //00377723 Conecta a la base de datos
             Statement st = conn.createStatement(); //00377723 Crea un Statement para ejecutar la consulta
             reporte = ruta + "ReporteD-" + fechaActual + ".txt"; //00377723 Guarda la ruta y el nombre del archivo para el reporte D
 
@@ -295,13 +315,14 @@ public class ReportesController implements Initializable
                     "FROM tbTransaccion t " +
                     "INNER JOIN tbTarjeta b ON t.id_tarjeta = b.id_tarjeta " +
                     "INNER JOIN tbCliente c ON b.id_cliente = c.id " +
-                    "WHERE b.facilitador = '" + txtFacilitador.getText() + "' " +
+                    "INNER JOIN tbFacilitador f ON b.id_facilitador = f.id " +
+                    "WHERE f.nombre = '" + cbFacilitadores.getValue() + "' " +
                     "GROUP BY c.nombre"; //00377723 guarda la consulta en un string
             ResultSet rs = st.executeQuery(query); //00377723 Ejecuta la consulta
 
             // Formato para Reporte D 00064122
             txtReporte.appendText("----------Reporte D-----------------\n"); //00064122 Agrega encabezado del reporte
-            txtReporte.appendText("Facilitador: " + txtFacilitador.getText() + "\n\n"); //00064122 Agrega el facilitador de la tarjeta
+            txtReporte.appendText("Facilitador: " + cbFacilitadores.getValue() + "\n\n"); //00064122 Agrega el facilitador de la tarjeta
 
             while (rs.next()) { //00064122 Itera sobre los resultados de la consulta
                 txtReporte.appendText("Cliente: " + rs.getString("c.nombre") + "\tCantidad de compras: " + rs.getInt("cantidadCompras") + "\tTotal gastado: " + rs.getFloat("totalGastado") + "\n"); //00064122 Formatea y agrega cada transaccion
@@ -311,7 +332,14 @@ public class ReportesController implements Initializable
 
         } catch (Exception e) { //00377723 En caso de error
             System.out.println("Fallo al generar reporte D"); //00377723 Imprime mensaje de error
+            e.printStackTrace(); //00064122 Imprime la traza del error
         }
+    }
+    private void showAlertError(String title, String content) { // 00379223 Muestra una alerta de error con el título y contenido especificados
+        Alert alert = new Alert(Alert.AlertType.ERROR); //0037923 Crea una alerta de tipo ERROR
+        alert.setTitle(title); //00379223 Establece el título
+        alert.setContentText(content); //00379223 Establece el contenido
+        alert.showAndWait(); //00379223 Muestra la alerta y espera
     }
 
 
@@ -321,7 +349,7 @@ public class ReportesController implements Initializable
         txtReporte.clear(); //00377723 Limpia el TextArea en caso de haber texto previo
         fechaActual = new SimpleDateFormat("(dd-MM-yyyy_HH;mm;ss)").format(new Date()); //00377723 Añade la fecha y hora actual al atributo antes creado
 
-        //Algún espacio vacio
+        //Algún espacio vacío
         Alert alertVacio = new Alert(Alert.AlertType.WARNING); //00377723 Instancia la clase Alert para tirar un mensaje en caso de que falte por rellenar un espacio para la creación del reporte
         alertVacio.setTitle("Reportes Advertencia"); //00377723 le da nombre a la ventana de Warning
         alertVacio.setContentText("Debe rellenar todos los espacios!"); //00377723 Establece el texto de aviso en la ventana de Warning
@@ -335,10 +363,7 @@ public class ReportesController implements Initializable
                     alertVacio.showAndWait(); //00377723 Muestra la pantalla de Advertencia en caso de que falte algo
                 }
                  else if (dpFechaFinal.getValue().isBefore(dpFechaInicial.getValue())){ //00377723 Evalúa si la fecha final seleccionada es menor a la fecha inicial
-                    Alert alertFecha = new Alert(Alert.AlertType.ERROR); //00377723 Instancia la clase Alert para tirar un mensaje en caso de que la fecha final sea antes que la fecha inicial
-                    alertFecha.setTitle("Reportes Error");//00377723 Le da nombre a la ventana de Error
-                    alertFecha.setContentText("La fecha final no puede ser antes que la fecha inicial!"); //00377723 Establece el texto de aviso en la ventana de Error
-                    alertFecha.showAndWait(); //00377723 Muestra la pantalla de Error en caso de que la fecha final seleccionada sea antes que le fecha inicial
+                    showAlertError("Error al introducir fechas", "La fecha final no puede ser antes que la fecha inicial");
                 }
                 else{ //00377723 En caso de no encontrar errores
                     generarReporteA(); //00377723 Llama al método generarReporteA para realizar la consulta y escribir el reporte
@@ -359,7 +384,7 @@ public class ReportesController implements Initializable
         //ReporteC
         if (rbReporteC.isSelected()) //00377723 Evalúa si el RadioButton del reporte C está seleccionado
             {
-                if (txtIDCliente.getText().isEmpty()){
+                if (txtIDCliente.getText().isEmpty()){ //00377723 Verifica si no ha añadido algún dato en un espacio
                     alertVacio.showAndWait(); //00377723 Muestra la pantalla de Advertencia en caso de que falte algo
                 }
                 else { //00377723 En caso de no encontrar errores
@@ -371,7 +396,7 @@ public class ReportesController implements Initializable
         //ReporteD
         if (rbReporteD.isSelected()) //00377723 Evalúa si el RadioButton del reporte D está seleccionado
             {
-                if (txtFacilitador.getText().isEmpty()){
+                if (cbFacilitadores.getValue() == null){ //00377723 Verifica si no ha añadido algún dato en un espacio
                     alertVacio.showAndWait(); //00377723 Muestra la pantalla de Advertencia en caso de que falte algo
                 }
                 else { //00377723 En caso de no encontrar errores

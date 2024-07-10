@@ -1,0 +1,1 @@
+No se encontraron transacciones para el cliente en el periodo especificado.

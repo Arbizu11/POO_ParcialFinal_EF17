@@ -1,0 +1,4 @@
+----------Reporte D-----------------
+Facilitador: Visa
+
+Cliente: Fernando	Cantidad de compras: 2	Total gastado: 75.6
